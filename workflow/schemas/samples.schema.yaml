@@ -1,0 +1,56 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+description: >
+  Samplesheet row. nf-core/cutandrun columns (group, replicate, fastq_1,
+  fastq_2, control) plus the optional target, target_type, peak_mode, batch,
+  and the bam-mode columns bam and spikein_reads.
+type: object
+properties:
+  group:
+    type: string
+    pattern: "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+    description: >
+      experimental group (antibody x condition, e.g. FOS_HRG60); libraries are
+      named <group>_R<replicate>. Groups are the unit of merging, consensus
+      peaks, IDR and contrasts.
+  replicate:
+    type: string
+    pattern: "^[1-9][0-9]*$"
+    description: biological replicate number (integer >= 1)
+  fastq_1: {type: string, description: R1 FASTQ (fastq mode)}
+  fastq_2: {type: string, description: R2 FASTQ (fastq mode; paired-end only)}
+  control:
+    type: string
+    pattern: "^$|^[A-Za-z0-9][A-Za-z0-9._-]*$"
+    description: >
+      group holding the IgG (or other) control libraries for this group; empty
+      for no control and for the control groups themselves
+  target:
+    type: string
+    pattern: "^$|^[A-Za-z0-9][A-Za-z0-9._-]*$"
+    description: >
+      antibody target (e.g. FOS, H3K27ac, IgG). Groups of one target share a
+      consensus peak set, a DiffBind object and (by default) greenlist size
+      factors. Defaults to the group name.
+  target_type:
+    type: string
+    enum: ["", tf, histone]
+    description: >
+      tf (default) or histone. tf libraries are flagged on the sub-nucleosomal
+      fragment fraction and can be size-selected for peak calling.
+  peak_mode:
+    type: string
+    enum: ["", narrow, broad]
+    description: MACS2 narrow (default) or --broad peaks
+  batch:
+    type: string
+    pattern: "^$|^[A-Za-z0-9][A-Za-z0-9._-]*$"
+    description: >
+      optional batch label (library prep / sequencing batch). Used to warn about
+      IgG controls from another batch, for greenlist_group target_batch, and as
+      a covariate when config `batch: true`.
+  bam: {type: string, description: filtered, coordinate-sorted BAM (bam mode)}
+  spikein_reads:
+    type: string
+    pattern: "^$|^[0-9]+$"
+    description: spike-in fragment count per library (bam mode, optional)
+required: [group, replicate]

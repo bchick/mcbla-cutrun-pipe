@@ -1,0 +1,8 @@
+group	replicate	fastq_1	fastq_2	control	target	target_type	peak_mode	batch
+FOS_US	1	FOS_US_r1_R1.fastq.gz	FOS_US_r1_R2.fastq.gz	IgG	FOS	tf	narrow	b1
+FOS_US	2	FOS_US_r2_R1.fastq.gz	FOS_US_r2_R2.fastq.gz	IgG	FOS	tf	narrow	b1
+FOS_HRG60	1	FOS_HRG60_r1_R1.fastq.gz	FOS_HRG60_r1_R2.fastq.gz	IgG	FOS	tf	narrow	b1
+FOS_HRG60	2	FOS_HRG60_r2_R1.fastq.gz	FOS_HRG60_r2_R2.fastq.gz	IgG	FOS	tf	narrow	b1
+K27ac_US	1	K27ac_US_r1_R1.fastq.gz	K27ac_US_r1_R2.fastq.gz	IgG	H3K27ac	histone	narrow	b1
+K27ac_US	2	K27ac_US_r2_R1.fastq.gz	K27ac_US_r2_R2.fastq.gz	IgG	H3K27ac	histone	narrow	b1
+IgG	1	IgG_r1_R1.fastq.gz	IgG_r1_R2.fastq.gz		IgG	histone	narrow	b1

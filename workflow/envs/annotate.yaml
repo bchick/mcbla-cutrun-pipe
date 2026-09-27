@@ -1,0 +1,12 @@
+# Peak annotation: ChIPseeker with a TxDb built from the GTF (GenomicFeatures).
+# Kept apart from r.yaml so the DiffBind pins do not constrain it.
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  - r-base =4.3
+  - bioconductor-chipseeker
+  - bioconductor-genomicfeatures
+  - bioconductor-rtracklayer
+  - r-ggplot2

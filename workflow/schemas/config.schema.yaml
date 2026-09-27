@@ -1,0 +1,187 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+description: mcbla-cutrun-pipe configuration
+type: object
+definitions:
+  pair: &pair {type: array, items: {type: number}, minItems: 2, maxItems: 2}
+  peakset: &peakset
+    type: string
+    default: ""
+    description: consensus | merged | idr | individual (diff only) | path to a BED file
+  normmethod: &normmethod {type: string, enum: [depth, greenlist, spikein]}
+properties:
+  samples: {type: string, description: samplesheet (TSV/CSV)}
+  contrasts: {type: string, default: "", description: contrasts TSV (group1, group2, label)}
+  input_mode: {type: string, enum: [fastq, bam]}
+  fastq_dir: {type: string, default: ""}
+  bam_dir: {type: string, default: ""}
+  reference:
+    type: object
+    properties:
+      fasta: {type: string}
+      bowtie2_index: {type: string, default: ""}
+      gtf: {type: string, default: ""}
+      blacklist: {type: string, default: ""}
+      greenlist: {type: string, default: ""}
+      effective_genome_size: {type: integer, minimum: 1}
+      macs2_gsize: {type: [string, number]}
+      mito_chrom: {type: string, default: chrM}
+    required: [fasta, effective_genome_size, macs2_gsize]
+  spikein:
+    type: object
+    properties:
+      fasta: {type: string, default: ""}
+      combined_bowtie2_index: {type: string, default: ""}
+      contig_prefix: {type: string, default: "spikein_"}
+  batch:
+    type: boolean
+    default: false
+  modules:
+    type: object
+    properties:
+      qc: {type: boolean, default: true}
+      multiqc: {type: boolean, default: true}
+      idr: {type: boolean, default: false}
+    additionalProperties: false
+  trimming:
+    type: object
+    properties:
+      adapter_r1: {type: string}
+      adapter_r2: {type: string}
+      quality: {type: [string, integer]}
+      min_length: {type: integer, minimum: 1}
+      extra: {type: string, default: ""}
+    required: [adapter_r1, adapter_r2, quality, min_length]
+  align:
+    type: object
+    properties:
+      bowtie2_args: {type: string}
+      min_mapq: {type: integer, minimum: 0}
+      flag_exclude: {type: integer, minimum: 0}
+      sort_mem_per_thread: {type: string, default: 768M}
+    required: [bowtie2_args, min_mapq, flag_exclude]
+  duplicates:
+    type: object
+    properties:
+      remove_target: {type: boolean, default: false}
+      remove_control: {type: boolean, default: true}
+  fragments:
+    type: object
+    properties:
+      tf_max_size: {type: integer, minimum: 1, default: 120}
+      peak_max_size: {type: integer, minimum: 0, default: 0}
+  igg:
+    type: object
+    properties:
+      as_control: {type: boolean, default: true}
+      qc: {type: boolean, default: true}
+      hotspot_filter: {type: boolean, default: false}
+      min_fold: {type: number, exclusiveMinimum: 0, default: 2.0}
+      hotspot_bed: {type: string, default: ""}
+      hotspot_qvalue: {type: number, exclusiveMinimum: 0, maximum: 1, default: 0.01}
+      remove_hotspot_overlaps: {type: boolean, default: false}
+      background_windows: {type: integer, minimum: 100, default: 20000}
+      window_size: {type: integer, minimum: 100, default: 5000}
+      seed: {type: integer, default: 42}
+  peaks:
+    type: object
+    properties:
+      caller: {type: string, enum: [macs2, seacr], default: macs2}
+      qvalue: {type: number, exclusiveMinimum: 0, maximum: 1}
+      relaxed_pvalue: {type: number, exclusiveMinimum: 0, maximum: 1, default: 0.01}
+      broad_cutoff: {type: number, exclusiveMinimum: 0, maximum: 1, default: 0.1}
+      macs2_extra: {type: string, default: ""}
+      min_overlap: {type: integer, minimum: 1, default: 2}
+      seacr:
+        type: object
+        properties:
+          run: {type: boolean, default: false}
+          mode: {type: string, enum: [stringent, relaxed], default: stringent}
+          threshold: {type: number, exclusiveMinimum: 0, maximum: 1, default: 0.01}
+          norm: {type: string, enum: [norm, non], default: norm}
+    required: [qvalue]
+  normalization:
+    type: object
+    properties:
+      bigwig_methods: {type: array, items: *normmethod, minItems: 1, default: [depth]}
+      depth_method: {type: string, enum: [RPGC, CPM], default: RPGC}
+      greenlist_group: {type: string, enum: [target, target_batch], default: target}
+      bin_size: {type: integer, minimum: 1, default: 10}
+      smooth_length: {type: integer, minimum: 0, default: 50}
+      bamcoverage_extra: {type: string, default: ""}
+  qc:
+    type: object
+    properties:
+      summary_bin_size: {type: integer, minimum: 1, default: 500}
+      thresholds:
+        type: object
+        additionalProperties: false
+        description: >
+          [pass, warn] per metric. Higher-is-better metrics: >= pass PASS,
+          >= warn WARN, else FAIL. mito_pct and dup_pct: <= pass PASS,
+          <= warn WARN, else FAIL.
+        properties:
+          fragments: *pair
+          aligned_pct: *pair
+          mito_pct: *pair
+          dup_pct: *pair
+          frip: *pair
+          tf_fraction: *pair
+          igg_pass_fraction: *pair
+  idr:
+    type: object
+    properties:
+      threshold: {type: number, exclusiveMinimum: 0, maximum: 1}
+      rank: {type: string, enum: [p.value, q.value, signal.value], default: p.value}
+      multi_rep_strategy: {type: string, enum: [encode_max_pair, first_two], default: encode_max_pair}
+      allow_failure: {type: boolean, default: true}
+    required: [threshold]
+  diff:
+    type: object
+    properties:
+      run: {type: boolean, default: false}
+      peaks: *peakset
+      normalization: *normmethod
+      min_overlap: {type: number, exclusiveMinimum: 0, default: 2}
+      summits: {type: [integer, boolean, "null"], default: null}
+      fdr: {type: number, exclusiveMinimum: 0, maximum: 1, default: 0.05}
+      lfc: {type: number, minimum: 0, default: 1.0}
+  normcheck:
+    type: object
+    properties:
+      run: {type: boolean, default: false}
+      methods:
+        type: array
+        items: {type: string, enum: [depth, greenlist, spikein, csaw]}
+        default: [depth, greenlist, csaw]
+      sensitivity_threshold: {type: number, exclusiveMinimum: 0, default: 0.2}
+      min_abs_change: {type: integer, minimum: 0, default: 10}
+  heatmaps:
+    type: object
+    properties:
+      run: {type: boolean, default: false}
+      peaks: *peakset
+      normalization: *normmethod
+      flank: {type: integer, minimum: 1, default: 1000}
+      tss: {type: boolean, default: true}
+      colormap: {type: string, default: Blues}
+  annotate:
+    type: object
+    properties:
+      run: {type: boolean, default: false}
+      peaks: *peakset
+      tss_region: {type: integer, minimum: 0, default: 3000}
+  motifs:
+    type: object
+    properties:
+      run: {type: boolean, default: false}
+      peaks: *peakset
+      size: {type: [integer, string], default: 200}
+      denovo: {type: boolean, default: false}
+      mask: {type: boolean, default: false}
+      extra: {type: string, default: ""}
+  threads:
+    type: object
+    additionalProperties: {type: integer, minimum: 1}
+required: [samples, input_mode, reference, modules, trimming, align, duplicates,
+           fragments, igg, peaks, normalization, qc, idr, diff, normcheck,
+           heatmaps, annotate, motifs]

@@ -1,0 +1,10 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+description: One contrast between two groups of the same target; log2 fold change = group1 over group2.
+type: object
+properties:
+  group1: {type: string, minLength: 1}
+  group2: {type: string, minLength: 1}
+  label:
+    type: string
+    pattern: "^[A-Za-z0-9._-]+$"
+required: [group1, group2, label]

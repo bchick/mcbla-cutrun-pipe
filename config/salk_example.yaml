@@ -1,0 +1,33 @@
+# =============================================================================
+# Salk / McBla lab example: GRCh38 references on the lab server
+# =============================================================================
+# Overrides config/config.yaml (Snakemake merges --configfile on top of it):
+#
+#   pixi run snakemake --configfile config/salk_example.yaml --profile profiles/local -n
+#
+# Paths are the ones used by the mcf7_project CUT&RUN scripts
+# (scripts/alignment/1.1_cutrun_align_cc.sh, 1.1_cutrun_align_spikein.sh,
+#  scripts/cutrun/1.3-1.8). They are read-only inputs.
+
+samples: config/samples.tsv
+contrasts: config/contrasts.tsv
+input_mode: fastq
+fastq_dir: fastq
+
+reference:
+  # Illumina iGenomes GRCh38 (NCBI), chr-prefixed; bowtie2 2.5.2 index
+  fasta: /data/bchick/wproj/mcf7_project/data/reference/GRCh38/Sequence/WholeGenomeFasta/genome.fa
+  bowtie2_index: /data/bchick/wproj/mcf7_project/data/reference/GRCh38/Sequence/Bowtie2Index/genome
+  gtf: /data/bchick/wproj/mcf7_project/data/reference/GRCh38/Annotation/Genes.gencode/genes.gtf
+  blacklist: /data/bchick/wproj/mcf7_project/data/reference/GRCh38/Annotation/hg38-blacklist.v2.bed
+  greenlist: hg38
+  effective_genome_size: 2913022398
+  macs2_gsize: hs
+  mito_chrom: chrM
+
+# E. coli carry-over as spike-in: the lab's combined GRCh38 + E. coli K-12
+# MG1655 index (contig Ecoli_MG1655), as in 1.1_cutrun_align_spikein.sh.
+# Uncomment to align every library to it and count E. coli fragments.
+# spikein:
+#   combined_bowtie2_index: /data/bchick/wproj/mcf7_project/data/reference/GRCh38_Ecoli/Sequence/Bowtie2Index/genome
+#   contig_prefix: "Ecoli_"

@@ -1,0 +1,276 @@
+# =============================================================================
+# .test configuration: tiny synthetic CUT&RUN dataset (see .test/README.md)
+# Run from the repo root:  pixi run test      (align -> peaks -> consensus)
+#                          pixi run test-all  (everything, then check_results.py)
+# This directory is the Snakemake working directory (--directory .test).
+# Every option is switched on so the whole DAG is exercised.
+# =============================================================================
+# -----------------------------------------------------------------------------
+# Inputs
+# -----------------------------------------------------------------------------
+# Samplesheet (TSV or CSV). nf-core/cutandrun compatible columns
+#   group, replicate, fastq_1, fastq_2, control
+# plus optional
+#   target       antibody (FOS, H3K27ac, IgG, ...); defaults to the group.
+#                Groups of one target share consensus peaks, one DiffBind
+#                object and (by default) greenlist size factors.
+#   target_type  tf (default) | histone. tf libraries are flagged on the
+#                sub-nucleosomal fragment fraction.
+#   peak_mode    narrow (default) | broad (MACS2 --broad, e.g. H3K27me3)
+#   batch        library prep / sequencing batch
+#   bam          bam mode: filtered BAM per library
+#   spikein_reads  bam mode: spike-in fragment count per library
+# Libraries are named <group>_R<replicate>. Rows sharing group + replicate are
+# runs of one library and are concatenated. `control` names the group holding
+# the IgG libraries for that group (leave it empty for the IgG rows).
+samples: config/samples.tsv
+
+# Contrasts for diff/normcheck: group1, group2, label (log2FC = group1 / group2).
+# Both groups must be the same target.
+contrasts: config/contrasts.tsv
+
+# fastq : full pipeline from FASTQ (trim, align, filter, mark duplicates, ...)
+# bam   : start from filtered, coordinate-sorted BAMs (samplesheet `bam`
+#         column), e.g. the *_markdup.bam files of an earlier run
+input_mode: fastq
+
+# Prefixes for relative fastq_1/fastq_2 and bam paths ("" = none).
+fastq_dir: data/fastq
+bam_dir: ""
+
+# -----------------------------------------------------------------------------
+# Reference
+# -----------------------------------------------------------------------------
+reference:
+  # Genome FASTA (plain or .gz). Also used by HOMER.
+  fasta: data/ref/genome.fa
+  # bowtie2 index prefix. Empty = build one from `fasta` (fastq mode only).
+  bowtie2_index: ""   # built by the pipeline
+  # GTF: TSS heatmaps and peak annotation (optional otherwise).
+  gtf: data/ref/genes.gtf
+  # Blacklist BED (ENCODE v2 for hg38/mm10). Empty disables blacklist filtering.
+  blacklist: data/ref/blacklist.bed
+  # CUT&RUN greenlist for greenlist normalization: `hg38` (bundled, de Mello
+  # et al. 2024, 868 regions) or a BED path. Only needed for greenlist.
+  greenlist: data/ref/greenlist.bed
+  # Effective genome size for RPGC tracks (GRCh38: 2913022398; mm10: 2652783500).
+  effective_genome_size: 4000000
+  # MACS2 -g: hs | mm | ce | dm or a number (hs = the lab-benchmarked setting).
+  macs2_gsize: 4000000
+  # Mitochondrial contig removed after alignment.
+  mito_chrom: chrM
+
+# -----------------------------------------------------------------------------
+# Spike-in (optional; fastq mode). Reads are aligned to host + spike-in, and
+# spike-in fragments (deduplicated, both mates on spike-in contigs) are counted
+# per library. Works for E. coli carry-over and for added yeast / Drosophila.
+# -----------------------------------------------------------------------------
+spikein:
+  # Spike-in FASTA: the pipeline builds a combined host + spike-in index,
+  # renaming spike-in contigs <contig_prefix><name>.
+  fasta: data/ref/spikein.fa
+  # Or a prebuilt combined index (host + spike-in); contig_prefix must then
+  # match its spike-in contig names (the lab GRCh38_Ecoli index: "Ecoli_").
+  combined_bowtie2_index: ""
+  contig_prefix: "spikein_"
+
+# Batch covariate. true: model the samplesheet `batch` column in diff and
+# normcheck (~batch + group). The run stops before any job if batch is
+# incomplete or confounded with group.
+batch: false
+
+# -----------------------------------------------------------------------------
+# Processing modules
+# -----------------------------------------------------------------------------
+modules:
+  qc: true          # deepTools fragment sizes, correlation, PCA, fingerprint
+  multiqc: true     # MultiQC report
+  idr: true         # IDR per narrow group (relaxed MACS2) + idr peak sets
+
+# -----------------------------------------------------------------------------
+# Trimming (cutadapt). NEBNext Ultra II / TruSeq adapters (mcf7 1.1 script).
+# -----------------------------------------------------------------------------
+trimming:
+  adapter_r1: AGATCGGAAGAGCACACGTCTGAACTCCAGTCA
+  adapter_r2: AGATCGGAAGAGCGTCGTGTAGGGAAAGAGTGT
+  quality: "20,20"                  # -q
+  min_length: 20                    # -m ; --pair-filter=any is always used
+  extra: ""
+
+# -----------------------------------------------------------------------------
+# Alignment + filtering (bowtie2, samtools)
+# -----------------------------------------------------------------------------
+align:
+  # CUT&RUN settings of the lab's 1.1_cutrun_align_cc.sh (benchmark 21: keep bowtie2)
+  bowtie2_args: "--very-sensitive-local --no-unal --no-mixed --no-discordant --phred33 -I 10 -X 700 --dovetail"
+  min_mapq: 20            # samtools view -q
+  flag_exclude: 2828      # samtools view -F; -f 2 (proper pairs) always
+  sort_mem_per_thread: 768M
+
+# Duplicates are always marked. Removing them from targets over-removes real
+# CUT&RUN signal (cuts at a bound site recur at the same position); IgG
+# controls are deduplicated, as in nf-core/cutandrun.
+duplicates:
+  remove_target: false
+  remove_control: true
+
+fragments:
+  # "TF fraction" = fragments <= this size (QC flag for target_type tf).
+  tf_max_size: 120
+  # > 0: call peaks of tf groups on fragments <= this size only (e.g. 120).
+  # Their controls are size-selected the same way. 0 = all fragments.
+  peak_max_size: 150
+
+# -----------------------------------------------------------------------------
+# IgG controls. Each option works on its own; all need IgG libraries in the
+# samplesheet except the hotspot BED.
+# -----------------------------------------------------------------------------
+igg:
+  # Call peaks against the group's `control` (MACS2 -c; SEACR control mode).
+  # Groups without a control are called without one.
+  as_control: true
+  # Report per peak set the enrichment over IgG (qc_summary, MultiQC).
+  qc: true
+  # Drop peaks with fold over IgG < min_fold. Fold = target / IgG fragments in
+  # the peak, each library scaled by its own density over random background
+  # windows (depth-free; the mcf7 analysis 39 IgG gate). The IgG is the
+  # group's control, else all IgG libraries pooled. Unfiltered peaks are kept
+  # as <name>.raw.bed.
+  hotspot_filter: true
+  min_fold: 2.0
+  # Also drop peaks overlapping IgG hotspots (pooled-IgG MACS2 peaks at
+  # hotspot_qvalue, plus hotspot_bed). Off: hotspots are only reported, since
+  # real peaks at open promoters often overlap IgG signal.
+  remove_hotspot_overlaps: false
+  hotspot_bed: ""
+  hotspot_qvalue: 0.01
+  background_windows: 300
+  window_size: 2000
+  seed: 42
+
+# -----------------------------------------------------------------------------
+# Peak calling
+# -----------------------------------------------------------------------------
+peaks:
+  # Caller whose peaks feed consensus sets, FRiP, IgG QC and the analyses.
+  # MACS2 won the lab benchmark (mcf7 analysis 19).
+  caller: macs2
+  qvalue: 0.05            # MACS2 -q (narrow)
+  broad_cutoff: 0.1       # MACS2 --broad-cutoff (peak_mode broad)
+  relaxed_pvalue: 0.01    # IDR input peaks (modules.idr)
+  macs2_extra: ""
+  # A group's consensus = peaks in >= min(min_overlap, n replicates) replicates.
+  min_overlap: 2
+  seacr:
+    run: true
+    mode: stringent       # stringent | relaxed
+    # Without an IgG control SEACR keeps the top `threshold` of signal blocks.
+    threshold: 0.01
+    norm: norm            # norm | non (normalize control to target)
+
+# -----------------------------------------------------------------------------
+# Normalization and signal tracks
+# -----------------------------------------------------------------------------
+# depth     : bamCoverage CPM (or RPGC); fine for replicate QC and for
+#             contrasts without a global change in binding
+# greenlist : DESeq2 size factors on the CUT&RUN greenlist; use for contrasts
+#             with a global shift (stimulus vs unstimulated, degrader vs
+#             vehicle); mcf7 analyses 20 and 22
+# spikein   : spike-in fragments (needs `spikein` or `spikein_reads`)
+# greenlist and spike-in tracks are CPM-equivalent (equal to CPM when there
+# is no global shift). Each method writes results/bigwig/<method>/.
+normalization:
+  bigwig_methods: [depth, greenlist, spikein]
+  depth_method: CPM       # CPM | RPGC (CPM shares units with the other methods)
+  # Size factors are estimated within target (or target x batch).
+  greenlist_group: target
+  bin_size: 10
+  smooth_length: 50
+  bamcoverage_extra: ""
+
+# -----------------------------------------------------------------------------
+# QC
+# -----------------------------------------------------------------------------
+qc:
+  summary_bin_size: 500   # multiBamSummary bins (correlation, PCA)
+  # [pass, warn] per metric in results/qc/qc_summary.tsv. Flags are reported,
+  # never enforced. mito_pct and dup_pct: lower is better.
+  thresholds:
+    fragments: [40000, 20000]
+    aligned_pct: [85, 70]
+    mito_pct: [5, 10]
+    dup_pct: [50, 70]
+    frip: [0.1, 0.05]
+    tf_fraction: [0.5, 0.3]         # tf targets; real TF CUT&RUN is mostly < 120 bp
+    igg_pass_fraction: [0.8, 0.5]   # peaks >= igg.min_fold over IgG
+
+# -----------------------------------------------------------------------------
+# IDR (modules.idr)
+# -----------------------------------------------------------------------------
+idr:
+  threshold: 0.05
+  rank: p.value
+  multi_rep_strategy: encode_max_pair
+  allow_failure: true
+
+# -----------------------------------------------------------------------------
+# Analyses (opt-in)
+# -----------------------------------------------------------------------------
+# Each analysis runs only with `run: true` and must name its peak set:
+#   consensus   per target: reproducible peaks of each group, merged
+#   merged      per target: merged-BAM peaks of each group, merged
+#   idr         per target: IDR peaks of each group (modules.idr)
+#   individual  diff only: DiffBind consensus of per-library peaks in
+#               >= diff.min_overlap libraries
+#   <path>.bed  any BED file (first three columns), used for every target
+
+diff:
+  run: true
+  peaks: consensus
+  # depth | greenlist | spikein
+  normalization: greenlist
+  min_overlap: 2
+  summits: null           # dba.count summits (re-centring width); null = DiffBind default
+  fdr: 0.05
+  lfc: 1.0                # reported as extra |log2FC| columns
+
+# Re-run every contrast under other normalizations and flag contrasts whose
+# gained/lost counts move by > 20 % (and >= 10 peaks) or whose direction flips.
+normcheck:
+  run: true
+  methods: [depth, spikein, csaw]   # csaw = DiffBind background bins
+  sensitivity_threshold: 0.20
+  min_abs_change: 10
+
+heatmaps:
+  run: true
+  peaks: consensus
+  normalization: greenlist
+  flank: 1000
+  tss: true               # also a TSS heatmap per target (needs reference.gtf)
+  colormap: Blues
+
+annotate:
+  run: true
+  peaks: consensus
+  tss_region: 3000        # promoter = TSS +/- this many bp
+
+motifs:
+  run: true
+  peaks: consensus
+  size: 200               # findMotifsGenome.pl -size
+  denovo: false           # true: de novo motifs too (slow)
+  mask: false             # -mask (needs a soft-masked FASTA)
+  extra: ""
+
+# -----------------------------------------------------------------------------
+# Threads per rule family
+# -----------------------------------------------------------------------------
+threads:
+  bowtie2_build: 2
+  cutadapt: 2
+  bowtie2: 4
+  samtools: 2
+  deeptools: 2
+  diffbind: 2
+  homer: 2

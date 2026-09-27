@@ -1,0 +1,11 @@
+# Alignment + BAM processing (pins from the lab's pipeline-tools/pixi.toml "align")
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  - bowtie2 =2.5.2
+  - cutadapt =4.6
+  - samtools =1.13
+  - bedtools =2.30.0
+  - pigz

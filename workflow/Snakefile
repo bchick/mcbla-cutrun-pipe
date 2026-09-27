@@ -1,0 +1,53 @@
+# mcbla-cutrun-pipe
+# CUT&RUN from FASTQ to peaks, normalized signal and differential binding,
+# with optional IgG controls, greenlist / spike-in normalization and
+# benchmarked defaults.
+#
+# Author: Brent Chick (McBla lab, Salk Institute)
+# License: MIT
+
+import os
+
+from snakemake.utils import min_version
+
+min_version("8.20")
+
+# Defaults: <workdir>/config/config.yaml, else the repository's own, so a
+# project directory only needs a --configfile with the keys it changes.
+DEFAULT_CONFIG = "config/config.yaml"
+if not os.path.exists(DEFAULT_CONFIG):
+    DEFAULT_CONFIG = os.path.join(workflow.basedir, "..", "config", "config.yaml")
+
+
+configfile: DEFAULT_CONFIG
+
+
+include: "rules/common.smk"
+include: "rules/align.smk"
+include: "rules/peaks.smk"
+include: "rules/idr.smk"
+include: "rules/normalization.smk"
+include: "rules/qc.smk"
+include: "rules/diff.smk"
+include: "rules/downstream.smk"
+
+
+localrules:
+    all,
+    test_core,
+    host_chrom_sizes,
+    peak_summary,
+    consensus_summary,
+    igg_enrichment_table,
+
+
+rule all:
+    default_target: True
+    input:
+        all_targets(),
+
+
+# Alignment -> peaks -> consensus only (used by the .test dataset and CI).
+rule test_core:
+    input:
+        core_targets(),

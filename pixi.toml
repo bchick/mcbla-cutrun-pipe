@@ -1,0 +1,51 @@
+# Launcher environment for mcbla-cutrun-pipe.
+#
+# This environment provides only Snakemake, its executor plugins, and a conda
+# frontend. Every bioinformatics tool is pinned per stage in workflow/envs/*.yaml
+# and is materialised by Snakemake itself (`--sdm conda`), because the pinned
+# tool versions (macs2 2.2.9.1, cutadapt 4.6, deeptools 3.5.4, multiqc 1.17,
+# idr 2.0.4.2) do not co-solve on one Python.
+#
+#   pixi install                 # restore the launcher
+#   pixi run build-test          # build the synthetic .test dataset
+#   pixi run dry                 # dry run on the .test dataset
+#   pixi run test                # run the .test dataset (align -> peaks -> consensus)
+#   pixi run snakemake --profile profiles/slurm ...
+
+[workspace]
+name = "mcbla-cutrun-pipe"
+version = "0.1.0"
+description = "Snakemake CUT&RUN: FASTQ to peaks, normalized signal and differential binding, with optional IgG controls"
+authors = ["Brent Chick"]
+channels = ["conda-forge", "bioconda"]
+platforms = ["linux-64", "osx-64", "osx-arm64"]
+
+[dependencies]
+python = "3.12.*"
+snakemake = ">=8.20,<10"
+snakemake-executor-plugin-slurm = "*"
+snakemake-executor-plugin-cluster-generic = "*"
+# conda frontend used by `--sdm conda` to build workflow/envs/*.yaml
+conda = ">=24.7.1"
+snakefmt = "*"
+pandas = "*"
+
+# One conda env store for every `pixi run snakemake` (test and real runs,
+# any --directory): <repo>/.snakemake/conda (gitignored). Override by
+# exporting SNAKEMAKE_CONDA_PREFIX or passing --conda-prefix, e.g. to a shared
+# lab store so each lab member does not build the envs again.
+[activation.env]
+SNAKEMAKE_CONDA_PREFIX = "${SNAKEMAKE_CONDA_PREFIX:-$PIXI_PROJECT_ROOT/.snakemake/conda}"
+
+[tasks]
+# Test dataset (synthetic, gitignored). --fasta <hg38.fa> avoids the UCSC download.
+build-test = "bash .test/scripts/build_test_data.sh"
+# Dry run / lint of the whole workflow on the test dataset
+dry = "snakemake -n -s workflow/Snakefile --directory .test"
+lint = "snakemake --lint -s workflow/Snakefile --directory .test"
+fmt-check = "snakefmt --no-format-shell --check workflow/"
+# Real run of the test dataset through align -> peaks -> consensus
+test = "snakemake -s workflow/Snakefile --directory .test --sdm conda --cores 8 test_core"
+# Whole workflow on the test dataset (all analyses on), then regression checks
+test-all = "snakemake -s workflow/Snakefile --directory .test --sdm conda --cores 8 && python .test/scripts/check_results.py"
+check-test = "python .test/scripts/check_results.py"

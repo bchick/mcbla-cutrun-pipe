@@ -1,0 +1,6 @@
+# Small helper scripts (standard library only)
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python =3.11

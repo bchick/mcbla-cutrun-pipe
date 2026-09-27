@@ -1,0 +1,10 @@
+group	replicate	fastq_1	fastq_2	control	target	target_type	peak_mode	batch
+tfA_ctrl	1	tfA_ctrl_r1_R1.fastq.gz	tfA_ctrl_r1_R2.fastq.gz	IgG	tfA	tf	narrow	b1
+tfA_ctrl	2	tfA_ctrl_r2_R1.fastq.gz	tfA_ctrl_r2_R2.fastq.gz	IgG	tfA	tf	narrow	b1
+tfA_stim	1	tfA_stim_r1_R1.fastq.gz	tfA_stim_r1_R2.fastq.gz	IgG	tfA	tf	narrow	b1
+tfA_stim	2	tfA_stim_r2_R1.fastq.gz	tfA_stim_r2_R2.fastq.gz	IgG	tfA	tf	narrow	b1
+tfA_stim	3	tfA_stim_r3a_R1.fastq.gz	tfA_stim_r3a_R2.fastq.gz	IgG	tfA	tf	narrow	b1
+tfA_stim	3	tfA_stim_r3b_R1.fastq.gz	tfA_stim_r3b_R2.fastq.gz	IgG	tfA	tf	narrow	b1
+k27_ctrl	1	k27_ctrl_r1_R1.fastq.gz	k27_ctrl_r1_R2.fastq.gz		k27	histone	broad	b1
+IgG	1	IgG_r1_R1.fastq.gz	IgG_r1_R2.fastq.gz		IgG			b1
+IgG	2	IgG_r2_R1.fastq.gz	IgG_r2_R2.fastq.gz		IgG			b1

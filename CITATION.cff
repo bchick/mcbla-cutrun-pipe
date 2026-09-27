@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this workflow, please cite it as below, together with the tools it runs (see README)."
+title: "mcbla-cutrun-pipe: CUT&RUN from FASTQ to peaks, normalized signal and differential binding"
+authors:
+  - family-names: Chick
+    given-names: Brent
+    affiliation: "Salk Institute for Biological Studies"
+version: 0.1.0
+license: MIT
+type: software
+repository-code: "https://github.com/bchick/mcbla-cutrun-pipe"

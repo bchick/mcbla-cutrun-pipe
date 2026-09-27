@@ -1,0 +1,8 @@
+# IDR (pipeline-tools "idr")
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  - idr =2.0.4.2
+  - bedtools =2.30.0

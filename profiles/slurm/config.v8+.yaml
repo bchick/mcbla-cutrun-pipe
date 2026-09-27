@@ -1,0 +1,24 @@
+# Slurm profile (primary cluster profile). Requires snakemake-executor-plugin-slurm
+# (provided by the repo pixi.toml). Usage:
+#   pixi run snakemake --profile profiles/slurm --configfile <your config>
+# Set your partition/account below or via --default-resources on the command line.
+executor: slurm
+jobs: 100
+software-deployment-method: conda
+conda-frontend: conda
+# Shared, reusable env cache (edit to a shared lab path to avoid re-solving per project)
+# conda-prefix: set by SNAKEMAKE_CONDA_PREFIX (pixi.toml); default <workdir>/.snakemake/conda
+printshellcmds: true
+rerun-incomplete: true
+keep-going: true
+latency-wait: 60
+retries: 1
+default-resources:
+  slurm_partition: ""       # e.g. "normal"
+  slurm_account: ""         # e.g. "mcbla"
+  mem_mb: 4000
+  runtime: 120              # minutes
+  tmpdir: system_tmpdir
+set-threads:
+  bowtie2_align: 16
+  tobias_bindetect: 32

@@ -1,0 +1,16 @@
+# R / Bioconductor steps: DiffBind (DESeq2 backend) and csaw background-bin
+# normalization. Pinned to the Bioconductor 3.17 release used for the mcf7
+# CUT&RUN DiffBind analyses (DiffBind 3.10.1, DESeq2 1.40.2) and by
+# mcbla-bulkatac-pipe.
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  - r-base =4.3
+  - bioconductor-diffbind =3.10
+  - bioconductor-deseq2 =1.40
+  - bioconductor-csaw
+  - bioconductor-edger
+  - bioconductor-genomicranges
+  - r-ggplot2

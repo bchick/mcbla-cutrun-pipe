@@ -1,0 +1,10 @@
+# HOMER motif enrichment (genome given as a FASTA; no HOMER genome package needed)
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  - homer =4.11
+  # HOMER 4.11 perl modules do not compile under perl >= 5.38
+  # ("Missing comma after first argument to return", HomerSVGLogo.pm)
+  - perl <5.38

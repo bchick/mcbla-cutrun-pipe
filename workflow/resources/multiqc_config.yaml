@@ -1,0 +1,59 @@
+# MultiQC configuration used by the multiqc rule.
+title: "mcbla-cutrun-pipe"
+subtitle: "CUT&RUN QC"
+extra_fn_clean_exts:
+  - ".final"
+  - ".flagstat"
+  - ".cutadapt"
+  - ".bowtie2"
+  - ".markdup"
+  - "_fastqc"
+  - "_peaks"
+custom_data:
+  qc_summary:
+    section_name: "QC summary (CUT&RUN thresholds)"
+    description: "PASS / WARN / FAIL per metric against qc.thresholds in the config. Flags are reported, not enforced."
+    plot_type: "table"
+  alignment_qc:
+    section_name: "Alignment QC (pipeline)"
+    plot_type: "table"
+  igg_enrichment:
+    section_name: "Enrichment over IgG"
+    description: "Per peak set: median fold over IgG (each library scaled by its own background-window density), fraction of peaks >= igg.min_fold, fraction overlapping pooled-IgG hotspots."
+    plot_type: "table"
+  spikein:
+    section_name: "Spike-in"
+    plot_type: "table"
+  sizefactors_greenlist:
+    section_name: "Greenlist size factors"
+    plot_type: "table"
+  sizefactors_spikein:
+    section_name: "Spike-in size factors"
+    plot_type: "table"
+  peaks_macs2_individual:
+    section_name: "Per-library peaks (MACS2)"
+    plot_type: "table"
+  peaks_macs2_merged:
+    section_name: "Per-group peaks (MACS2, merged replicates)"
+    plot_type: "table"
+  peaks_seacr_individual:
+    section_name: "Per-library peaks (SEACR)"
+    plot_type: "table"
+  peaks_seacr_merged:
+    section_name: "Per-group peaks (SEACR, merged replicates)"
+    plot_type: "table"
+  idr_summary:
+    section_name: "IDR reproducibility"
+    plot_type: "table"
+sp:
+  qc_summary: {fn: "qc_summary_mqc.tsv"}
+  alignment_qc: {fn: "alignment_qc_mqc.tsv"}
+  igg_enrichment: {fn: "igg_enrichment_mqc.tsv"}
+  spikein: {fn: "spikein_mqc.tsv"}
+  sizefactors_greenlist: {fn: "sizefactors_greenlist_mqc.tsv"}
+  sizefactors_spikein: {fn: "sizefactors_spikein_mqc.tsv"}
+  peaks_macs2_individual: {fn: "peaks_macs2_individual_mqc.tsv"}
+  peaks_macs2_merged: {fn: "peaks_macs2_merged_mqc.tsv"}
+  peaks_seacr_individual: {fn: "peaks_seacr_individual_mqc.tsv"}
+  peaks_seacr_merged: {fn: "peaks_seacr_merged_mqc.tsv"}
+  idr_summary: {fn: "idr_summary_mqc.tsv"}

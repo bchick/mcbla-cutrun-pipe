@@ -1,0 +1,35 @@
+# Snakemake
+.snakemake/
+/results/
+/logs/
+/benchmarks/
+*.snakemake_timestamp
+
+# Test dataset (built by .test/scripts/build_test_data.sh)
+.test/data/
+.test/results/
+.test/logs/
+.test/.snakemake/
+
+# pixi launcher env (pixi.lock is committed)
+.pixi/
+
+# Local resources / references
+/resources/
+*.bam
+*.bai
+*.bw
+*.fastq.gz
+*.fq.gz
+
+# Python / R / editors
+__pycache__/
+*.pyc
+.Rhistory
+.RData
+.Rproj.user/
+.DS_Store
+*.swp
+
+# CI dry-run placeholders
+/fastq/

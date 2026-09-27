@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_test:
+        description: "Also run the .test dataset end to end (all modules)"
+        type: boolean
+        default: false
+
+jobs:
+  lint-and-dryrun:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: prefix-dev/setup-pixi@v0.8.1
+        with:
+          cache: true
+      - name: Build synthetic test data
+        run: pixi run build-test
+      - name: Lint
+        run: pixi run lint
+      - name: Format check
+        run: pixi run fmt-check
+      - name: Dry run (fastq mode, every module on)
+        run: pixi run dry
+      - name: Dry run (bam mode, fake BAMs)
+        run: |
+          fake=$RUNNER_TEMP/bams; mkdir -p $fake
+          # group, replicate, control, target, target_type, peak_mode (empty fields kept)
+          awk -F'\t' -v d=$fake 'BEGIN{OFS="\t"; print "group","replicate","bam","control","target","target_type","peak_mode","spikein_reads"}
+              NR > 1 && !seen[$1 FS $2]++ {b = d "/" $1 "_R" $2 ".bam"; print $1, $2, b, $5, $6, $7, $8, 1000}' \
+              .test/config/samples.tsv > $fake/samples.tsv
+          cut -f3 $fake/samples.tsv | tail -n +2 | while read b; do touch $b $b.bai; done
+          printf 'input_mode: bam\nsamples: %s\n' "$fake/samples.tsv" > $RUNNER_TEMP/bam.yaml
+          pixi run snakemake -n -s workflow/Snakefile --directory .test --configfile $RUNNER_TEMP/bam.yaml
+      - name: Dry run (default config with placeholder references)
+        run: |
+          mkdir -p fastq resources/genome/bowtie2
+          for f in $(tail -n +2 config/samples.tsv | cut -f3,4); do touch fastq/$f; done
+          touch resources/genome/{genome.fa,genes.gtf,hg38-blacklist.v2.bed}
+          for s in 1 2 3 4 rev.1 rev.2; do touch resources/genome/bowtie2/genome.$s.bt2; done
+          pixi run snakemake -n
+
+  test-run:
+    if: github.event_name == 'workflow_dispatch' && inputs.run_test
+    runs-on: ubuntu-latest
+    needs: lint-and-dryrun
+    steps:
+      - uses: actions/checkout@v4
+      - uses: prefix-dev/setup-pixi@v0.8.1
+        with:
+          cache: true
+      - run: pixi run build-test
+      - run: pixi run test-all
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: |
+            .test/results/qc/qc_summary.tsv
+            .test/results/qc/igg_enrichment.tsv
+            .test/results/normalization/*/size_factors.tsv
+            .test/results/peaks/*/*/peak_summary.tsv
+            .test/results/diff/*/normcheck/
+            .test/logs/

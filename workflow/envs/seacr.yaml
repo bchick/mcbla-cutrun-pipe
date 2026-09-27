@@ -1,0 +1,8 @@
+# SEACR peak calling (SEACR_1.3.sh; needs R and bedtools)
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  - seacr =1.3
+  - bedtools =2.30.0

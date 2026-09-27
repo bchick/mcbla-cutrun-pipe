@@ -1,0 +1,8 @@
+# Signal tracks + deepTools QC (pipeline-tools "signal"/"qc")
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  - deeptools =3.5.4
+  - samtools =1.13
