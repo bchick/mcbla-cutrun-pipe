@@ -8,17 +8,10 @@ A Snakemake workflow for paired-end **CUT&RUN**. It takes FASTQ files (or filter
 
 The processing defaults are those of the McBla lab CUT&RUN scripts, chosen by comparing aligners, peak callers and normalizations; [docs/defaults_rationale.md](docs/defaults_rationale.md) gives the reason for each. The infrastructure follows [mcbla-bulkatac-pipe](https://github.com/bchick/mcbla-bulkatac-pipe): pixi launcher, pinned per-step conda envs, Slurm and local profiles, a validated samplesheet and config, a synthetic test dataset, and CI.
 
-```
-FASTQ ─ cutadapt ─ bowtie2 (host [+ spike-in]) ─ MAPQ/pair filter ─ mito/blacklist ─ mark duplicates
-                                                         │
-             ┌───────────────────────────────────────────┼────────────────────────────┐
-         QC (FastQC, fragment sizes,             peaks: MACS2 [-c IgG] | SEACR     signal: depth | greenlist
-         TF fraction, FRiP, correlation,         → blacklist → IgG gate            | spike-in bigWigs
-         fingerprint vs IgG, qc_summary,         → group consensus (≥ k reps)      (per library, per group)
-         MultiQC)                                → per-target peak sets [IDR]
-                                                         │
-                                  opt-in: DiffBind (per target) · normcheck · heatmaps · ChIPseeker · HOMER
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/images/subway_map_dark.svg">
+  <img alt="mcbla-cutrun-pipe subway map: FASTQ or filtered BAMs, through cutadapt, Bowtie 2 with optional spike-in, filtering and duplicate marking, into MACS2 or SEACR peaks, the IgG gate, replicate consensus and per-target peak sets; signal tracks under depth, greenlist or spike-in size factors; a QC branch ending in MultiQC; and opt-in DiffBind contrasts, normalization check, deepTools heatmaps, ChIPseeker annotation and HOMER motifs" src="docs/images/subway_map_light.svg">
+</picture>
 
 ## Quick start
 

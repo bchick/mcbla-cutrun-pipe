@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1520 660" width="1520" height="660" font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+<title>mcbla-cutrun-pipe subway map</title>
+<rect x="40" y="20" width="572" height="560" rx="14" fill="#F6F8FA"/>
+<circle cx="62" cy="44" r="13" fill="#1F2328"/><text x="62" y="49" font-size="14" font-weight="700" fill="#F6F8FA" text-anchor="middle">1</text><text x="82" y="49" font-size="15" font-weight="700" fill="#1F2328">Preprocessing</text>
+<rect x="620" y="20" width="424" height="560" rx="14" fill="#F6F8FA"/>
+<circle cx="642" cy="44" r="13" fill="#1F2328"/><text x="642" y="49" font-size="14" font-weight="700" fill="#F6F8FA" text-anchor="middle">2</text><text x="662" y="49" font-size="15" font-weight="700" fill="#1F2328">Peaks, signal &amp; QC</text>
+<rect x="1052" y="20" width="440" height="560" rx="14" fill="#F6F8FA"/>
+<circle cx="1074" cy="44" r="13" fill="#1F2328"/><text x="1074" y="49" font-size="14" font-weight="700" fill="#F6F8FA" text-anchor="middle">3</text><text x="1094" y="49" font-size="15" font-weight="700" fill="#1F2328">Analyses (opt-in)</text>
+<polyline points="590,310 590,450 650,510 1015,510" fill="none" stroke="#F2B138" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="590,310 690,410 940,410" fill="none" stroke="#DB61A2" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="1000,310 1100,410 1200,510 1300,510" fill="none" stroke="#D83B3B" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="1000,310 1100,410 1250,410" fill="none" stroke="#16A2B8" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="1090,310 1210,190 1300,100 1460,100" fill="none" stroke="#E8702A" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="1090,310 1210,190 1460,190" fill="none" stroke="#8E44AD" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="1090,310 1450,310" fill="none" stroke="#1F6FEB" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="90,200 480,200 590,310" fill="none" stroke="#8C8C8C" stroke-width="9" stroke-linejoin="round" stroke-dasharray="16 8" stroke-linecap="butt"/>
+<polyline points="90,310 1090,310" fill="none" stroke="#24B064" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="80" y="298" width="20" height="24" rx="3" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/><line x1="85" y1="306" x2="95" y2="306" stroke="#1F2328" stroke-width="2"/><line x1="85" y1="312" x2="95" y2="312" stroke="#1F2328" stroke-width="2"/>
+<text x="90" y="342" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">FASTQ</text>
+<circle cx="190" cy="310" r="9" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/>
+<text x="190" y="342" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">cutadapt</text>
+<text x="190" y="357" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="middle">(TruSeq trim)</text>
+<circle cx="295" cy="310" r="9" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/>
+<text x="295" y="342" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">Bowtie 2</text>
+<text x="295" y="357" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="middle">host [+ spike-in]</text>
+<circle cx="400" cy="310" r="9" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/>
+<text x="400" y="342" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">Filter</text>
+<text x="400" y="357" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="middle">MAPQ20, pairs,</text>
+<text x="400" y="372" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="middle">chrM, blacklist</text>
+<circle cx="500" cy="310" r="9" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/>
+<text x="500" y="342" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">markdup</text>
+<text x="500" y="357" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="middle">targets: marked</text>
+<text x="500" y="372" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="middle">IgG: removed</text>
+<rect x="577" y="297" width="26" height="26" rx="13" fill="#FFFFFF" stroke="#1F2328" stroke-width="3.5"/>
+<text x="590" y="288" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">Final BAMs</text>
+<rect x="80" y="188" width="20" height="24" rx="3" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/><line x1="85" y1="196" x2="95" y2="196" stroke="#1F2328" stroke-width="2"/><line x1="85" y1="202" x2="95" y2="202" stroke="#1F2328" stroke-width="2"/>
+<text x="90" y="163" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">Filtered BAMs</text>
+<text x="90" y="178" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="middle">input_mode: bam</text>
+<circle cx="690" cy="310" r="9" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/>
+<text x="690" y="273" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">MACS2</text>
+<text x="690" y="288" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="middle">or SEACR</text>
+<circle cx="795" cy="310" r="9" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/>
+<text x="795" y="273" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">IgG gate</text>
+<text x="795" y="288" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="middle">fold over IgG</text>
+<circle cx="900" cy="310" r="9" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/>
+<text x="900" y="273" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">Consensus</text>
+<text x="900" y="288" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="middle">≥ k replicates</text>
+<circle cx="1000" cy="310" r="9" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/>
+<text x="1000" y="273" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">Peak sets</text>
+<text x="1000" y="288" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="middle">per target [+ IDR]</text>
+<rect x="1077" y="297" width="26" height="26" rx="13" fill="#FFFFFF" stroke="#1F2328" stroke-width="3.5"/>
+<text x="1090" y="342" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">Counts over</text>
+<text x="1090" y="357" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="middle">target peaks</text>
+<circle cx="790" cy="410" r="9" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/>
+<text x="790" y="358" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">Size factors</text>
+<text x="790" y="373" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="middle">depth | greenlist |</text>
+<text x="790" y="388" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="middle">spike-in</text>
+<rect x="930" y="398" width="20" height="24" rx="3" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/><line x1="935" y1="406" x2="945" y2="406" stroke="#1F2328" stroke-width="2"/><line x1="935" y1="412" x2="945" y2="412" stroke="#1F2328" stroke-width="2"/>
+<text x="940" y="373" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">bigWig tracks</text>
+<text x="940" y="388" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="middle">library + group</text>
+<circle cx="710" cy="510" r="9" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/>
+<text x="710" y="542" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">Fragment</text>
+<text x="710" y="557" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="middle">sizes</text>
+<circle cx="790" cy="510" r="9" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/>
+<text x="790" y="542" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">FRiP</text>
+<circle cx="870" cy="510" r="9" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/>
+<text x="870" y="542" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">Fingerprint</text>
+<text x="870" y="557" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="middle">vs IgG</text>
+<circle cx="945" cy="510" r="9" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/>
+<text x="945" y="473" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">Correlation</text>
+<text x="945" y="488" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="middle">+ PCA</text>
+<rect x="1005" y="498" width="20" height="24" rx="3" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/><line x1="1010" y1="506" x2="1020" y2="506" stroke="#1F2328" stroke-width="2"/><line x1="1010" y1="512" x2="1020" y2="512" stroke="#1F2328" stroke-width="2"/>
+<text x="1015" y="488" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">MultiQC</text>
+<rect x="1240" y="398" width="20" height="24" rx="3" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/><line x1="1245" y1="406" x2="1255" y2="406" stroke="#1F2328" stroke-width="2"/><line x1="1245" y1="412" x2="1255" y2="412" stroke="#1F2328" stroke-width="2"/>
+<text x="1268" y="408" font-size="13" font-weight="700" fill="#1F2328" text-anchor="start">ChIPseeker</text>
+<text x="1268" y="422" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="start">annotation</text>
+<rect x="1290" y="498" width="20" height="24" rx="3" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/><line x1="1295" y1="506" x2="1305" y2="506" stroke="#1F2328" stroke-width="2"/><line x1="1295" y1="512" x2="1305" y2="512" stroke="#1F2328" stroke-width="2"/>
+<text x="1318" y="508" font-size="13" font-weight="700" fill="#1F2328" text-anchor="start">HOMER</text>
+<text x="1318" y="522" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="start">known + de novo</text>
+<circle cx="1270" cy="310" r="9" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/>
+<text x="1270" y="342" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">DiffBind +</text>
+<text x="1270" y="357" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="middle">DESeq2 contrasts</text>
+<rect x="1440" y="298" width="20" height="24" rx="3" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/><line x1="1445" y1="306" x2="1455" y2="306" stroke="#1F2328" stroke-width="2"/><line x1="1445" y1="312" x2="1455" y2="312" stroke="#1F2328" stroke-width="2"/>
+<text x="1450" y="342" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">Gained / lost</text>
+<text x="1450" y="357" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="middle">peaks, MA plots</text>
+<circle cx="1345" cy="190" r="9" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/>
+<text x="1345" y="153" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">Other</text>
+<text x="1345" y="168" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="middle">normalizations</text>
+<rect x="1450" y="178" width="20" height="24" rx="3" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/><line x1="1455" y1="186" x2="1465" y2="186" stroke="#1F2328" stroke-width="2"/><line x1="1455" y1="192" x2="1465" y2="192" stroke="#1F2328" stroke-width="2"/>
+<text x="1460" y="153" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">Sensitivity</text>
+<text x="1460" y="168" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="middle">verdict</text>
+<circle cx="1345" cy="100" r="9" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/>
+<text x="1345" y="78" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">computeMatrix</text>
+<rect x="1450" y="88" width="20" height="24" rx="3" fill="#FFFFFF" stroke="#1F2328" stroke-width="3"/><line x1="1455" y1="96" x2="1465" y2="96" stroke="#1F2328" stroke-width="2"/><line x1="1455" y1="102" x2="1465" y2="102" stroke="#1F2328" stroke-width="2"/>
+<text x="1460" y="63" font-size="13" font-weight="700" fill="#1F2328" text-anchor="middle">Heatmaps</text>
+<text x="1460" y="78" font-size="11.5" font-weight="400" fill="#59636E" text-anchor="middle">per peak set</text>
+<line x1="40" y1="602" x2="76" y2="602" stroke="#24B064" stroke-width="8" stroke-linecap="round"/><text x="90" y="607" font-size="13" fill="#1F2328">Processing: FASTQ to peak sets</text>
+<line x1="330" y1="602" x2="366" y2="602" stroke="#8C8C8C" stroke-width="8" stroke-dasharray="10 5" stroke-linecap="butt"/><text x="380" y="607" font-size="13" fill="#1F2328">Filtered BAM input</text>
+<line x1="620" y1="602" x2="656" y2="602" stroke="#F2B138" stroke-width="8" stroke-linecap="round"/><text x="670" y="607" font-size="13" fill="#1F2328">QC</text>
+<line x1="910" y1="602" x2="946" y2="602" stroke="#DB61A2" stroke-width="8" stroke-linecap="round"/><text x="960" y="607" font-size="13" fill="#1F2328">Signal tracks</text>
+<line x1="1200" y1="602" x2="1236" y2="602" stroke="#1F6FEB" stroke-width="8" stroke-linecap="round"/><text x="1250" y="607" font-size="13" fill="#1F2328">Differential binding</text>
+<line x1="40" y1="630" x2="76" y2="630" stroke="#8E44AD" stroke-width="8" stroke-linecap="round"/><text x="90" y="635" font-size="13" fill="#1F2328">Normalization check</text>
+<line x1="330" y1="630" x2="366" y2="630" stroke="#E8702A" stroke-width="8" stroke-linecap="round"/><text x="380" y="635" font-size="13" fill="#1F2328">Heatmaps (deepTools)</text>
+<line x1="620" y1="630" x2="656" y2="630" stroke="#16A2B8" stroke-width="8" stroke-linecap="round"/><text x="670" y="635" font-size="13" fill="#1F2328">Annotation (ChIPseeker)</text>
+<line x1="910" y1="630" x2="946" y2="630" stroke="#D83B3B" stroke-width="8" stroke-linecap="round"/><text x="960" y="635" font-size="13" fill="#1F2328">Motifs (HOMER)</text>
+</svg>
