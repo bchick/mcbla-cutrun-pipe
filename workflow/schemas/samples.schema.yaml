@@ -9,7 +9,7 @@ properties:
     type: string
     pattern: "^[A-Za-z0-9][A-Za-z0-9._-]*$"
     description: >
-      experimental group (antibody x condition, e.g. FOS_HRG60); libraries are
+      experimental group (antibody x condition, e.g. FOS_STIM60); libraries are
       named <group>_R<replicate>. Groups are the unit of merging, consensus
       peaks, IDR and contrasts.
   replicate:

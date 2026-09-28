@@ -10,9 +10,8 @@
 #
 # Size-factor tracks are scaled 1e6 / (size_factor x geometric-mean reads of
 # the normalization group), i.e. CPM-equivalent: without a global shift they
-# equal the CPM tracks, so all three methods share one unit. (The mcf7
-# bw_greenlist/ tracks were raw coverage / size factor and could not be
-# compared with bw/.) Every track lives under results/bigwig/<method>/.
+# equal the CPM tracks, so all three methods share one unit. (Raw coverage /
+# size factor would not be comparable with the CPM tracks.) Every track lives under results/bigwig/<method>/.
 
 if "greenlist" in SIZEFACTOR_METHODS:
 

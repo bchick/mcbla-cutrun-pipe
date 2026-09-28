@@ -1,4 +1,4 @@
-# Peak annotation with ChIPseeker (as in the mcf7 analyses 02, 05, 14, 15),
+# Peak annotation with ChIPseeker (as in the lab's analyses),
 # but with a TxDb built from reference.gtf so it works for any genome, and
 # gene names taken from the GTF instead of an OrgDb.
 #   annotatePeak(tssRegion = +/- annotate.tss_region) per peak set

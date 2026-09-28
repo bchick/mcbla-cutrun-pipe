@@ -1,12 +1,12 @@
 # Compare the diff.normalization results with each other normalization and
 # flag normalization-sensitive contrasts (mcbla-bulkatac-pipe normcheck, with
-# the >20 % rule of mcf7 22_normalization_decision).
+# a >20 % rule).
 #
 # A contrast is normalization-sensitive under a method when its gained OR
 # lost count changes by more than `threshold` (fraction, default 0.20) of
 # the primary count AND by at least `min_abs` peaks, or when the direction of
 # the net change flips (more gained than lost under one method, more lost
-# under the other; the MEKi sign flip of mcf7 analysis 20).
+# under the other).
 
 source(snakemake@params[["helpers"]])
 start_log()

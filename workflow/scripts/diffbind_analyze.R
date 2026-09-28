@@ -1,5 +1,5 @@
 # DiffBind differential binding for one target under one normalization
-# (port of the mcf7 DiffBind notebooks and cutrun_greenlist_helpers.R):
+# (port of the lab's DiffBind notebooks and greenlist helpers):
 #   depth     : dba.normalize() (DiffBind default, library size)
 #   greenlist : dba.normalize(library = size factors, normalize = DBA_NORM_LIB)
 #   spikein   : as greenlist, with spike-in size factors

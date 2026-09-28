@@ -6,8 +6,8 @@
 #   pixi run snakemake --configfile config/salk_example.yaml --profile profiles/local -n
 #
 # References are the shared copies in /data/resource (see
-# /data/resource/manifest.yaml). They are byte-identical to the mcf7_project
-# copies used by its CUT&RUN scripts (scripts/alignment/1.1_cutrun_align_cc.sh,
+# /data/resource/manifest.yaml). They are the references used by the lab's
+# CUT&RUN scripts (scripts/alignment/1.1_cutrun_align_cc.sh,
 # 1.1_cutrun_align_spikein.sh, scripts/cutrun/1.3-1.8). For a new project, run
 # `pixi run init` instead of copying this file.
 
@@ -29,7 +29,6 @@ reference:
 
 # E. coli carry-over as spike-in: the lab's combined GRCh38 + E. coli K-12
 # MG1655 index (contig Ecoli_MG1655), as in 1.1_cutrun_align_spikein.sh
-# (byte-identical copy of mcf7_project/data/reference/GRCh38_Ecoli).
 # Uncomment to align every library to it and count E. coli fragments.
 # spikein:
 #   combined_bowtie2_index: /data/resource/genomes/spike_ins/ecoli_K12_MG1655/GRCh38_igenomes_Ecoli/bowtie2/genome

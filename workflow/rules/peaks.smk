@@ -279,8 +279,7 @@ if IGG_FOLD:
         """Random windows away from peaks and the blacklist (per-library depth scale).
 
         Enrichment is depth-free: each library is divided by its own mean
-        density over these windows (the design of the mcf7 analysis 39 IgG
-        reality gate), not by total reads, which a high-FRiP target inflates.
+        density over these windows, not by total reads, which a high-FRiP target inflates.
         """
         input:
             sizes="results/reference/host.chrom.sizes",

@@ -59,7 +59,7 @@ reference:
   greenlist: hg38
   # Effective genome size for RPGC tracks (GRCh38: 2913022398; mm10: 2652783500).
   effective_genome_size: 2913022398
-  # MACS2 -g: hs | mm | ce | dm or a number (hs = the lab-benchmarked setting).
+  # MACS2 -g: hs | mm | ce | dm or a number (hs = the lab setting).
   macs2_gsize: hs
   # Mitochondrial contig removed after alignment.
   mito_chrom: chrM
@@ -92,7 +92,7 @@ modules:
   idr: false        # IDR per narrow group (relaxed MACS2) + idr peak sets
 
 # -----------------------------------------------------------------------------
-# Trimming (cutadapt). NEBNext Ultra II / TruSeq adapters (mcf7 1.1 script).
+# Trimming (cutadapt). NEBNext Ultra II / TruSeq adapters (the lab scripts).
 # -----------------------------------------------------------------------------
 trimming:
   adapter_r1: AGATCGGAAGAGCACACGTCTGAACTCCAGTCA
@@ -105,7 +105,7 @@ trimming:
 # Alignment + filtering (bowtie2, samtools)
 # -----------------------------------------------------------------------------
 align:
-  # CUT&RUN settings of the lab's 1.1_cutrun_align_cc.sh (benchmark 21: keep bowtie2)
+  # CUT&RUN settings of the lab's alignment script
   bowtie2_args: "--very-sensitive-local --no-unal --no-mixed --no-discordant --phred33 -I 10 -X 700 --dovetail"
   min_mapq: 20            # samtools view -q
   flag_exclude: 2828      # samtools view -F; -f 2 (proper pairs) always
@@ -137,7 +137,7 @@ igg:
   qc: true
   # Drop peaks with fold over IgG < min_fold. Fold = target / IgG fragments in
   # the peak, each library scaled by its own density over random background
-  # windows (depth-free; the mcf7 analysis 39 IgG gate). The IgG is the
+  # windows (depth-free). The IgG is the
   # group's control, else all IgG libraries pooled. Unfiltered peaks are kept
   # as <name>.raw.bed.
   hotspot_filter: false
@@ -157,7 +157,7 @@ igg:
 # -----------------------------------------------------------------------------
 peaks:
   # Caller whose peaks feed consensus sets, FRiP, IgG QC and the analyses.
-  # MACS2 won the lab benchmark (mcf7 analysis 19).
+  # MACS2 works with or without an IgG control.
   caller: macs2
   qvalue: 0.05            # MACS2 -q (narrow)
   broad_cutoff: 0.1       # MACS2 --broad-cutoff (peak_mode broad)
@@ -178,8 +178,7 @@ peaks:
 # depth     : bamCoverage CPM (or RPGC); fine for replicate QC and for
 #             contrasts without a global change in binding
 # greenlist : DESeq2 size factors on the CUT&RUN greenlist; use for contrasts
-#             with a global shift (stimulus vs unstimulated, degrader vs
-#             vehicle); mcf7 analyses 20 and 22
+#             with a global shift (a treatment that changes total binding)
 # spikein   : spike-in fragments (needs `spikein` or `spikein_reads`)
 # greenlist and spike-in tracks are CPM-equivalent (equal to CPM when there
 # is no global shift). Each method writes results/bigwig/<method>/.

@@ -9,10 +9,10 @@
 #     csaw      background bins (normcheck only)
 #   -> dba.contrast (~group, or ~batch + group) -> dba.analyze -> dba.report
 #
-# The greenlist / spike-in route is apply_greenlist_to_dba() of the mcf7
-# cutrun_greenlist_helpers.R. normcheck (opt-in) re-runs the same contrasts on
+# The greenlist / spike-in route follows the lab's greenlist helper for
+# DiffBind. normcheck (opt-in) re-runs the same contrasts on
 # the same counted object under the other methods and flags contrasts whose
-# gained/lost counts move (the decision rule of mcf7 analysis 22).
+# gained/lost counts move by more than normcheck.threshold.
 
 if RUN_DIFF:
 

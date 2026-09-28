@@ -258,8 +258,8 @@ PRIMARY = PK["caller"]
 if PK["seacr"]["run"] and not (IGG["as_control"] and HAS_IGG):
     _warn(
         "SEACR without an IgG control uses a numeric threshold "
-        f"(top {PK['seacr']['threshold']} of signal blocks); in the lab benchmark "
-        "(mcf7 analysis 19) this gave degenerate peak sets. Prefer MACS2, or "
+        f"(top {PK['seacr']['threshold']} of signal blocks), which ignores the "
+        "library's signal-to-noise and can give degenerate peak sets. Prefer MACS2, or "
         "give SEACR an IgG control."
     )
 

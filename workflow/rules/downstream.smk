@@ -4,7 +4,7 @@
 #              on replicate-averaged bigWigs of each target's groups (and their
 #              IgG controls) over the target's peaks, TSSs and, with diff on,
 #              each contrast's gained / lost peaks -> plotHeatmap
-#              (settings of mcf7 analyses/14_*/scripts/make_heatmaps*.sh)
+#              (settings of the lab's heatmap scripts)
 #   annotate : ChIPseeker annotatePeak with a TxDb built from reference.gtf
 #              (genome-agnostic; gene names from the GTF)
 #   motifs   : HOMER findMotifsGenome.pl on reference.fasta, known motifs

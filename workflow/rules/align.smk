@@ -2,7 +2,7 @@
 # (input_mode: bam).
 #
 # FASTQ mode is a port of the lab's 1.1_cutrun_align_cc.sh and
-# 1.1_cutrun_align_spikein.sh (mcf7_project/scripts/alignment/):
+# 1.1_cutrun_align_spikein.sh:
 #   cutadapt (NEBNext/TruSeq, -q 20,20 -m 20 --pair-filter=any)
 #   -> bowtie2 --very-sensitive-local --no-mixed --no-discordant -I 10 -X 700 --dovetail
 #      (host, or host + spike-in combined index)
@@ -403,7 +403,7 @@ if INPUT_MODE == "fastq":
 
 
 # ---------------------------------------------------------------------------
-# BAM mode: filtered BAMs from an earlier run (e.g. the mcf7 *_markdup.bam)
+# BAM mode: filtered BAMs from an earlier run (e.g. the lab scripts' *_markdup.bam)
 # ---------------------------------------------------------------------------
 if INPUT_MODE == "bam":
 

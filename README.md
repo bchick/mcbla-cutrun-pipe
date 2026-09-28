@@ -6,7 +6,7 @@ A Snakemake workflow for paired-end **CUT&RUN**. It takes FASTQ files (or filter
 - **Three normalizations.** Depth is the default. Greenlist and spike-in are available for experiments that change total binding.
 - **Downstream analyses are opt-in.** DiffBind, a normalization-sensitivity check, heatmaps, peak annotation and HOMER motifs each switch on separately.
 
-The processing defaults are those of the McBla lab CUT&RUN scripts in `mcf7_project`, which lab benchmarks chose (peak callers, aligners, normalization). The infrastructure follows [mcbla-bulkatac-pipe](https://github.com/bchick/mcbla-bulkatac-pipe): pixi launcher, pinned per-step conda envs, Slurm and local profiles, a validated samplesheet and config, a synthetic test dataset, and CI.
+The processing defaults are those of the McBla lab CUT&RUN scripts, chosen by comparing aligners, peak callers and normalizations; [docs/defaults_rationale.md](docs/defaults_rationale.md) gives the reason for each. The infrastructure follows [mcbla-bulkatac-pipe](https://github.com/bchick/mcbla-bulkatac-pipe): pixi launcher, pinned per-step conda envs, Slurm and local profiles, a validated samplesheet and config, a synthetic test dataset, and CI.
 
 ```
 FASTQ ─ cutadapt ─ bowtie2 (host [+ spike-in]) ─ MAPQ/pair filter ─ mito/blacklist ─ mark duplicates
@@ -62,7 +62,7 @@ pixi run test-all       # every module, then .test/scripts/check_results.py
 pixi run test-init      # `pixi run init` against a fixture manifest, every choice dry-run
 ```
 
-The config, samplesheet and contrasts are checked before any job runs. Mistakes stop the run with a plain-language message, for example `contrast X: FOS_HRG60 (FOS) and K27ac_US (H3K27ac) are different targets`.
+The config, samplesheet and contrasts are checked before any job runs. Mistakes stop the run with a plain-language message, for example `contrast X: FOS_STIM60 (FOS) and K27ac_US (H3K27ac) are different targets`.
 
 ## Samplesheet
 
@@ -70,7 +70,7 @@ TSV or CSV. The first five columns follow **nf-core/cutandrun**.
 
 | column | required | meaning |
 |---|---|---|
-| `group` | yes | experimental group, antibody × condition (e.g. `FOS_HRG60`). The unit of merging, consensus and contrasts. |
+| `group` | yes | experimental group, antibody × condition (e.g. `FOS_STIM60`). The unit of merging, consensus and contrasts. |
 | `replicate` | yes | biological replicate (1, 2, …). Libraries are named `<group>_R<replicate>`. |
 | `fastq_1`, `fastq_2` | fastq mode | paired-end reads. Rows sharing group and replicate are sequencing runs of one library and are concatenated. |
 | `control` | no | the group holding this group's IgG libraries. Leave it empty for the IgG rows themselves. |
@@ -85,7 +85,7 @@ TSV or CSV. The first five columns follow **nf-core/cutandrun**.
 group      replicate  fastq_1                 fastq_2                 control  target   target_type
 FOS_US     1          FOS_US_r1_R1.fastq.gz   FOS_US_r1_R2.fastq.gz   IgG      FOS      tf
 FOS_US     2          ...                                             IgG      FOS      tf
-FOS_HRG60  1          ...                                             IgG      FOS      tf
+FOS_STIM60  1          ...                                             IgG      FOS      tf
 IgG        1          IgG_r1_R1.fastq.gz      IgG_r1_R2.fastq.gz               IgG
 ```
 
@@ -101,12 +101,12 @@ Every IgG option is independent and can be switched off. A group is treated as a
 | `igg.qc` | on | For every peak set, reports the **fold over IgG** (median and fraction ≥ `min_fold`) and the overlap with pooled-IgG hotspots. The results go to `qc_summary.tsv` and MultiQC. |
 | `igg.hotspot_filter` | off | Drops peaks whose fold over IgG is below `igg.min_fold` (2×). The unfiltered peaks stay in `<name>.raw.bed`. With `remove_hotspot_overlaps`, it also drops peaks overlapping pooled-IgG MACS2 peaks or `hotspot_bed`. |
 
-**How the fold is computed.** Target and IgG fragment centres are counted in each peak and in random background windows away from peaks. Each library is divided by its own background density, so the fold does not depend on library depth or FRiP. This is the design of the lab's IgG reality gate (mcf7 analysis 39). The reference IgG is the group's `control`, or all IgG libraries pooled when the group has none.
+**How the fold is computed.** Target and IgG fragment centres are counted in each peak and in random background windows away from peaks. Each library is divided by its own background density, so the fold does not depend on library depth or FRiP. The reference IgG is the group's `control`, or all IgG libraries pooled when the group has none.
 
 **When to use which option:**
 
 - **IgG from the same batch:** keep `as_control` on.
-- **IgG only from another batch:** the pipeline warns. In the mcf7 data, a mismatched IgG *added* artefactual peaks, and a pooled IgG made no difference to peak calls. Consider `as_control: false` with `hotspot_filter: true`: the IgG then acts only as a filter for sticky regions.
+- **IgG only from another batch:** the pipeline warns. An IgG from another batch can carry different background and *add* artefactual peaks when used as the calling control. Consider `as_control: false` with `hotspot_filter: true`: the IgG then acts only as a filter for sticky regions.
 - **No IgG at all:** run everything without it. You can give an external hotspot BED as `igg.hotspot_bed`.
 
 ## Normalization
@@ -116,17 +116,17 @@ Every IgG option is independent and can be switched off. A group is treated as a
 | method | how | use for |
 |---|---|---|
 | `depth` (default) | bamCoverage CPM (or RPGC); DiffBind library size | replicate QC and PCA, and contrasts where total binding does not change |
-| `greenlist` | DESeq2 median-of-ratios on the 868-region CUT&RUN greenlist (de Mello et al. 2024; hg38 bundled, `reference.greenlist`) | contrasts with a **global shift**: stimulated vs unstimulated, degrader vs vehicle |
+| `greenlist` | DESeq2 median-of-ratios on the 868-region CUT&RUN greenlist (de Mello et al. 2024; hg38 bundled, `reference.greenlist`) | contrasts with a **global shift**, where a treatment changes total binding |
 | `spikein` | spike-in fragments (E. coli carry-over or added yeast/fly DNA) | the same, when the spike-in is reliable |
 
-- **Size factors are estimated within a target** (`greenlist_group: target_batch` estimates them within target × batch). Factors estimated over more samples than are being compared can differ substantially. In the mcf7 SD51 data, project-wide and subset factors correlated at only r = 0.85.
+- **Size factors are estimated within a target** (`greenlist_group: target_batch` estimates them within target × batch). Median-of-ratios factors depend on which libraries they are estimated from, so factors estimated over more samples than are being compared can differ substantially.
 - **Greenlist and spike-in tracks share CPM units.** They are scaled to be *CPM-equivalent*: identical to the CPM track when there is no global shift. They can therefore be compared by eye with the depth tracks. Every track is written under `results/bigwig/<method>/` so methods are not mixed by accident.
-- **normcheck** (`normcheck.run`) re-runs every contrast under the other methods on the same counts. It flags a contrast when its gained or lost counts move by more than 20 % (and by at least 10 peaks), or when the direction of the net change flips. This is the decision rule of mcf7 analyses 20 and 22, where TMM flipped the sign of the MEKi contrast and greenlist was chosen for global-shift contrasts.
+- **normcheck** (`normcheck.run`) re-runs every contrast under the other methods on the same counts. It flags a contrast when its gained or lost counts move by more than 20 % (and by at least 10 peaks), or when the direction of the net change flips. A contrast that flags is sensitive to the normalization choice. Under a global shift, peak-based methods such as TMM can even reverse its direction.
 
 ## Peaks
 
-- **MACS2** is the default caller (`-f BAMPE --keep-dup all -q 0.05`, or `--broad` per group) and won the lab benchmark (mcf7 analysis 19).
-- **SEACR** is opt-in (`peaks.seacr.run`, stringent by default). It works well with an IgG control. Without one it applies a numeric threshold, which gave degenerate peak sets in the benchmark, and the pipeline warns about this.
+- **MACS2** is the default caller (`-f BAMPE --keep-dup all -q 0.05`, or `--broad` per group). It works with or without an IgG control.
+- **SEACR** is opt-in (`peaks.seacr.run`, stringent by default). It works well with an IgG control. Without one it applies a numeric threshold, which ignores the library's signal-to-noise and can give degenerate peak sets, and the pipeline warns about this.
 - **Blacklist filtering** applies to every peak set, and **FRiP counts fragments** with duplicates excluded.
 - **Consensus per group** keeps merged peak regions that are supported by at least `min(peaks.min_overlap, n replicates)` replicates, retaining the full peak extents. Groups come from the samplesheet, so treatment arms at the same time point are never pooled.
 - **Per-target peak sets** feed the analyses:
@@ -156,7 +156,7 @@ Each analysis runs only with `<section>.run: true`, and you then set its `peaks:
 
 - `profiles/slurm`: set `slurm_partition` and `slurm_account`.
 - `profiles/local`: a single machine.
-- **Tools** are pinned per step in `workflow/envs/*.yaml` (bowtie2 2.5.2, cutadapt 4.6, samtools 1.13, MACS2 2.2.9.1, deepTools 3.5.4, DiffBind 3.10). These are the versions used for the mcf7 analyses.
+- **Tools** are pinned per step in `workflow/envs/*.yaml` (bowtie2 2.5.2, cutadapt 4.6, samtools 1.13, MACS2 2.2.9.1, deepTools 3.5.4, DiffBind 3.10). These are the versions the lab scripts used.
 - **Shared env store:** `SNAKEMAKE_CONDA_PREFIX` sets where envs are built. Point it at a shared lab directory so each lab member does not rebuild them.
 
 ## Outputs

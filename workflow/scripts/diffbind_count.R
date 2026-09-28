@@ -1,5 +1,5 @@
 # DiffBind: build the DBA object and count reads for one target (port of the
-# mcf7 DiffBind notebooks, e.g. 06_ap1_dynamics 03_diffbind_fos_pjun.Rmd).
+# lab's DiffBind notebooks).
 #   dba(sampleSheet) -> dba.count(minOverlap = 2)   (diff.peaks: individual)
 #   or dba.count over a fixed peak set             (any other diff.peaks)
 # The counted object is saved once and reused under every normalization

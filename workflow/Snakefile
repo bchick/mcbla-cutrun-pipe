@@ -1,7 +1,7 @@
 # mcbla-cutrun-pipe
 # CUT&RUN from FASTQ to peaks, normalized signal and differential binding,
 # with optional IgG controls, greenlist / spike-in normalization and
-# benchmarked defaults.
+# the lab's defaults (docs/defaults_rationale.md).
 #
 # Author: Brent Chick (McBla lab, Salk Institute)
 # License: MIT

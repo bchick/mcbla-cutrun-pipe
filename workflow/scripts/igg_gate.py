@@ -8,9 +8,8 @@ the windows), so the fold is free of library depth and of the target's FRiP:
     fold = ((t + 1) / d_target) / ((g + 1) / d_igg)
 
 with t, g the peak counts and d the background densities; the peak width
-cancels. This is the design of the mcf7 analysis 39 "IgG reality gate"
-(enrichment over per-library background, one counting instrument for target
-and IgG, threshold 2x).
+cancels. Enrichment is over per-library background, target and IgG are
+counted with one instrument, and the default threshold is 2x.
 
 Outputs
   <name>.igg.tsv          per peak: coordinates, counts, fold, hotspot overlap, pass

@@ -8,8 +8,8 @@ greenlist: DESeq2 median-of-ratios on the greenlist count matrix, computed
 spikein:   spike-in fragments / geometric mean of spike-in fragments in the group.
 
 Size factors are computed inside each group because factors estimated over
-a larger set than the one being compared differ (mcf7 SD51: r = 0.85 between
-project-wide and subset factors). A group with one library gets 1.
+a larger set than the one being compared can differ noticeably from those
+of the libraries being compared. A group with one library gets 1.
 
 Columns: SampleID, group, target, norm_group, size_factor, reads, scale_factor
 where reads are mapped reads (flagstat) and
