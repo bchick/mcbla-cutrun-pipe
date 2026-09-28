@@ -38,6 +38,11 @@ pandas = "*"
 SNAKEMAKE_CONDA_PREFIX = "${SNAKEMAKE_CONDA_PREFIX:-$PIXI_PROJECT_ROOT/.snakemake/conda}"
 
 [tasks]
+# Write a project config from the lab resource manifest (/data/resource/manifest.yaml).
+# Interactive, or every answer as flags: --dir --genome --igg --spikein --blacklist
+init = "python workflow/scripts/init_project.py"
+# init_project.py against a fixture manifest: refusals + dry run of every choice
+test-init = "bash .test/scripts/test_init.sh"
 # Test dataset (synthetic, gitignored). --fasta <hg38.fa> avoids the UCSC download.
 build-test = "bash .test/scripts/build_test_data.sh"
 # Dry run / lint of the whole workflow on the test dataset

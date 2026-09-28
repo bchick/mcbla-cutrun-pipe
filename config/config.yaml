@@ -5,8 +5,9 @@
 # Relative paths are resolved against the Snakemake working directory
 # (the repo root, or whatever you pass to --directory).
 #
-# Reference paths below are placeholders; see config/salk_example.yaml for a
-# filled-in GRCh38 example on the lab server.
+# Reference paths below are placeholders. On the lab server, `pixi run init`
+# writes a project config from /data/resource/manifest.yaml; see also
+# config/salk_example.yaml for a filled-in GRCh38 example.
 
 # -----------------------------------------------------------------------------
 # Inputs

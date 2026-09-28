@@ -25,6 +25,8 @@ jobs:
         run: pixi run lint
       - name: Format check
         run: pixi run fmt-check
+      - name: Project init (fixture manifest, every choice dry-run)
+        run: pixi run test-init
       - name: Dry run (fastq mode, every module on)
         run: pixi run dry
       - name: Dry run (bam mode, fake BAMs)

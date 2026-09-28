@@ -22,6 +22,18 @@ FASTQ ─ cutadapt ─ bowtie2 (host [+ spike-in]) ─ MAPQ/pair filter ─ mito
 
 ## Quick start
 
+**On the Salk lab server**, `pixi run init` asks which genome you are using, whether you have IgG controls, which spike-in and which blacklist. It then writes a project config that points at the shared references listed in `/data/resource/manifest.yaml`:
+
+```bash
+pixi install
+pixi run init                      # interactive; or pass --dir --genome --igg --spikein --blacklist
+pixi run init --list               # the genomes, blacklists and spike-ins on offer
+```
+
+It prints the dry-run command for the new project. Agents running the pipeline for someone should follow [AGENTS.md](AGENTS.md).
+
+**Anywhere else:**
+
 ```bash
 git clone https://github.com/bchick/mcbla-cutrun-pipe.git
 cd mcbla-cutrun-pipe
@@ -47,6 +59,7 @@ Try it first on the synthetic test dataset, which takes a few minutes:
 pixi run build-test     # ~25 MB of simulated reads on a 4 Mb chr22 window
 pixi run test           # align -> peaks -> consensus
 pixi run test-all       # every module, then .test/scripts/check_results.py
+pixi run test-init      # `pixi run init` against a fixture manifest, every choice dry-run
 ```
 
 The config, samplesheet and contrasts are checked before any job runs. Mistakes stop the run with a plain-language message, for example `contrast X: FOS_HRG60 (FOS) and K27ac_US (H3K27ac) are different targets`.
