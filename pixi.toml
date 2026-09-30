@@ -54,3 +54,8 @@ test = "snakemake -s workflow/Snakefile --directory .test --sdm conda --cores 8 
 # Whole workflow on the test dataset (all analyses on), then regression checks
 test-all = "snakemake -s workflow/Snakefile --directory .test --sdm conda --cores 8 && python .test/scripts/check_results.py"
 check-test = "python .test/scripts/check_results.py"
+# Head-to-head with nf-core/cutandrun on the test dataset (needs test-all outputs,
+# Nextflow and Docker; NFCORE_PROFILE=singularity to switch). See .test/README.md.
+test-nfcore-run = "bash .test/nfcore/run_nfcore.sh"
+compare-nfcore = "python .test/nfcore/compare_nfcore.py"
+test-nfcore = "bash .test/nfcore/run_nfcore.sh && python .test/nfcore/compare_nfcore.py"

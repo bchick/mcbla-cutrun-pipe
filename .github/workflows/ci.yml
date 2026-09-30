@@ -10,6 +10,10 @@ on:
         description: "Also run the .test dataset end to end (all modules)"
         type: boolean
         default: false
+      run_nfcore:
+        description: "Also run the .test dataset through nf-core and compare (slow)"
+        type: boolean
+        default: false
 
 jobs:
   lint-and-dryrun:
@@ -69,3 +73,25 @@ jobs:
             .test/results/peaks/*/*/peak_summary.tsv
             .test/results/diff/*/normcheck/
             .test/logs/
+
+  nfcore-compare:
+    if: github.event_name == 'workflow_dispatch' && inputs.run_nfcore
+    runs-on: ubuntu-latest
+    needs: lint-and-dryrun
+    steps:
+      - uses: actions/checkout@v4
+      - uses: prefix-dev/setup-pixi@v0.8.1
+        with:
+          cache: true
+      - uses: nf-core/setup-nextflow@v2
+      - run: pixi run build-test
+      - run: pixi run test-all
+      - run: pixi run test-nfcore
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nfcore-compare
+          include-hidden-files: true
+          path: |
+            .test/results/nfcore_compare/
+            .test/nfcore/run/.nextflow.log

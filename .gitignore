@@ -10,6 +10,7 @@
 .test/results/
 .test/logs/
 .test/.snakemake/
+.test/nfcore/run/
 
 # pixi launcher env (pixi.lock is committed)
 .pixi/

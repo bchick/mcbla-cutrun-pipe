@@ -1,0 +1,13 @@
+# nf-core/cutandrun 3.2.2 on the synthetic .test dataset (see run_nfcore.sh).
+# Inputs and references are passed on the command line as absolute paths.
+# Settings match the .test config where both pipelines have one.
+peakcaller: macs2          # our default caller (nf-core default: seacr)
+macs_gsize: 4000000        # .test config macs2_gsize
+use_control: true
+igenomes_ignore: true
+mito_name: chrM
+remove_mitochondrial_reads: true   # our pipeline drops chrM too
+normalisation_mode: Spikein  # nf-core default; MACS2 calls on BAMs are unaffected
+dump_scale_factors: true     # spike-in scale factors for the report
+skip_preseq: true            # too few reads for a complexity curve
+skip_igv: true
